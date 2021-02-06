@@ -21,5 +21,4 @@ To use this repo, CD into one of the directories below and simply run `vagrant u
 ```
 ./rsyslog-ng-examples/rsyslog-ng-ubuntu-20.04-vagrantbox             - Ubuntu syslog-ng example
 ./rsyslog-ng-examples/rsyslog-ng-centos8-stream-vagrantbox           - Redhat/CentOS/RHEL based on Centos 7.1 box
-./rsyslog-ng-examples/ssss           - Redhat/CentOS/RHEL based on Centos 7.1 box
 ```

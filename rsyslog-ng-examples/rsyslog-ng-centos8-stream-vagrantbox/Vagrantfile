@@ -1,0 +1,47 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Configures rsyslog-ng for LogDNA on Redhat based distributions
+# Used for educational purposes
+
+Vagrant.configure("2") do |config|
+  # Centos 7.1
+  config.vm.box = "bento/centos-7.1"
+  config.vm.box_version = "2.2.2"
+
+  config.vm.provider "virtualbox" do |v|
+    v.name = "vagrant_ubuntu20_rsyslogng_logdna_server"
+  end
+  config.vm.network "public_network", ip: "192.168.0.122"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    su - vagrant
+    
+    yum upgrade -y
+
+    apt-get install -y syslog-ng
+
+    mkdir -p /usr/local/share/ca-certificates/
+    pushd /usr/local/share/ca-certificates/
+        wget https://assets.logdna.com/rootca/ld-root-ca.crt
+    popd
+  SHELL
+
+  # Uncomment for TCP+TLS (Suggested for security)
+  config.vm.provision "file", source: "./configs/logdna-syslogng-tcptls.conf", destination: "/tmp/logdna-syslog-ng.conf"
+
+  # Uncomment for TCP (no TLS)
+  #config.vm.provision "file", source: "./configs/logdna-syslogng-tcp.conf", destination: "/tmp/logdna-syslog-ng.conf"
+
+  # Uncomment for UDP (no TLS)
+  # You must ask LogDNA Support to provision the syslog UDP port
+  #config.vm.provision "file", source: "./configs/logdna-syslogng-udp.conf", destination: "/tmp/logdna-syslog-ng.conf"
+
+  config.vm.provision "shell", inline: <<-SHELL
+    su - vagrant
+
+    cp /tmp/logdna-syslog-ng.conf /etc/syslog-ng/conf.d/logdna.conf
+    systemctl start syslog-ng
+  SHELL
+
+end
